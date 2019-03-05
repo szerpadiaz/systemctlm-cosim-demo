@@ -41,7 +41,7 @@ SYSTEMC_LIBDIR ?= $(SYSTEMC)/lib-linux64
 # TLM2 ?= /opt/systemc/TLM-2009-07-15
 endif
 
-SCML ?= /usr/local/scml-2.3/
+SCML ?= /usr/local/scml-2.4.3/
 SCML_INCLUDE ?= $(SCML)/include/
 SCML_LIBDIR ?= $(SCML)/lib-linux64/
 
@@ -65,7 +65,7 @@ LDLIBS   += -lsystemc
 
 ZYNQ_TOP_C = zynq_demo.cc
 ZYNQ_TOP_O = $(ZYNQ_TOP_C:.cc=.o)
-ZYNQMP_TOP_C = zynqmp_demo.cc
+ZYNQMP_TOP_C = zynqmp_demo2.cc
 ZYNQMP_TOP_O = $(ZYNQMP_TOP_C:.cc=.o)
 ZYNQMP_LMAC2_TOP_C = zynqmp_lmac2_demo.cc
 ZYNQMP_LMAC2_TOP_O = $(ZYNQMP_LMAC2_TOP_C:.cc=.o)
@@ -93,7 +93,7 @@ SC_OBJS += $(LIBSOC_ZYNQ_PATH)/xilinx-zynq.o
 CPPFLAGS += -I $(LIBSOC_ZYNQ_PATH)
 
 LIBSOC_ZYNQMP_PATH=$(LIBSOC_PATH)/zynqmp
-SC_OBJS += $(LIBSOC_ZYNQMP_PATH)/xilinx-zynqmp.o
+SC_OBJS += $(LIBSOC_ZYNQMP_PATH)/xilinx-zynqmp2.o
 CPPFLAGS += -I $(LIBSOC_ZYNQMP_PATH)
 
 LIBRP_PATH=$(LIBSOC_PATH)/libremote-port
@@ -154,7 +154,7 @@ VHDLAN_FLAGS += -sysc
 VHDLAN_FLAGS += -sc_model apb_slave_dummy
 
 SYSCAN_ZYNQ_DEMO = zynq_demo.cc
-SYSCAN_ZYNQMP_DEMO = zynqmp_demo.cc
+SYSCAN_ZYNQMP_DEMO = zynqmp_demo2.cc
 SYSCAN_ZYNQMP_LMAC2_DEMO = zynqmp_lmac2_demo.cc
 SYSCAN_SCFILES += demo-dma.cc debugdev.cc remote-port-tlm.cc
 VCS_CFILES += remote-port-proto.c remote-port-sk.c safeio.c
@@ -172,7 +172,7 @@ ZYNQMP_OBJS += $(OBJS)
 ZYNQMP_LMAC2_OBJS += $(OBJS)
 
 TARGET_ZYNQ_DEMO = zynq_demo
-TARGET_ZYNQMP_DEMO = zynqmp_demo
+TARGET_ZYNQMP_DEMO = zynqmp_demo2
 TARGET_ZYNQMP_LMAC2_DEMO = zynqmp_lmac2_demo
 
 TARGETS = $(TARGET_ZYNQ_DEMO) $(TARGET_ZYNQMP_DEMO)
