@@ -3,3 +3,6 @@
 *_demo
 .config.mk
 trace.vcd
+.cproject
+.project
+.settings/*
