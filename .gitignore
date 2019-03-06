@@ -1,6 +1,7 @@
 *.o
 *.d
 *_demo
+*_demo2
 .config.mk
 trace.vcd
 .cproject
