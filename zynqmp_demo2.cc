@@ -58,11 +58,13 @@ public:
    virtual void b_transport(tlm::tlm_generic_payload& transaction, sc_time& delay);
    public:
       tlm_utils::simple_target_socket<ecounter> t_sk;
+      sc_out<bool> irq;
+
       ecounter(sc_module_name name)
       : sc_module(name), t_sk("target-socket")
       {
          t_sk.register_b_transport(this, &ecounter::b_transport);
-	     m_count=0;
+	     m_count = 0;
       }
       SC_HAS_PROCESS(ecounter);
    private:
@@ -82,6 +84,12 @@ void ecounter::b_transport(tlm::tlm_generic_payload& transaction, sc_time& delay
 			data[1] = (m_count>>8) & 0xFF;
 			data[2] = (m_count>>16) & 0xFF;
 			data[3] = (m_count>>24) & 0xFF;
+			if(m_count == 9)
+			{
+				irq.write(true);
+				wait(sc_time(1, SC_US));
+				irq.write(false);
+			}
 			break;
 		case (tlm::TLM_WRITE_COMMAND):
 			m_count = 0;
@@ -119,6 +127,7 @@ SC_MODULE(Top)
 
 		counter =  new ecounter("Counter");
 		zynq.s_data->bind(counter->t_sk);
+		counter->irq(zynq.pl2ps_irq[1]);
 
 		zynq.tie_off();
 	}
