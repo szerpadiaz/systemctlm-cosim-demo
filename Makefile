@@ -83,6 +83,7 @@ SC_OBJS += memory.o
 SC_OBJS += trace.o
 SC_OBJS += debugdev.o
 SC_OBJS += demo-dma.o
+SC_OBJS += sample-counter.o
 SC_OBJS += xilinx-axidma.o
 
 LIBSOC_PATH=libsystemctlm-soc
@@ -156,7 +157,7 @@ VHDLAN_FLAGS += -sc_model apb_slave_dummy
 SYSCAN_ZYNQ_DEMO = zynq_demo.cc
 SYSCAN_ZYNQMP_DEMO = zynqmp_demo2.cc
 SYSCAN_ZYNQMP_LMAC2_DEMO = zynqmp_lmac2_demo.cc
-SYSCAN_SCFILES += demo-dma.cc debugdev.cc remote-port-tlm.cc
+SYSCAN_SCFILES += sample-counter.cc demo-dma.cc debugdev.cc remote-port-tlm.cc
 VCS_CFILES += remote-port-proto.c remote-port-sk.c safeio.c
 
 SYSCAN_FLAGS += -tlm2 -sysc=opt_if

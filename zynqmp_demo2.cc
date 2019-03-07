@@ -40,72 +40,14 @@ using namespace sc_dt;
 using namespace std;
 
 #include "trace.h"
-#include "iconnect.h"
-#include "debugdev.h"
 #include "xilinx-zynqmp2.h"
-
-#define NR_MASTERS	1
-#define NR_DEVICES	1
-
-#include "tlm_utils/simple_target_socket.h"
-
-/**
- * Example of a simple counter using TLM
- */
-class ecounter : public sc_core::sc_module
-{
-public:
-   virtual void b_transport(tlm::tlm_generic_payload& transaction, sc_time& delay);
-   public:
-      tlm_utils::simple_target_socket<ecounter> t_sk;
-      sc_out<bool> irq;
-
-      ecounter(sc_module_name name)
-      : sc_module(name), t_sk("target-socket")
-      {
-         t_sk.register_b_transport(this, &ecounter::b_transport);
-	     m_count = 0;
-      }
-      SC_HAS_PROCESS(ecounter);
-   private:
-      unsigned int m_count;
-};
-void ecounter::b_transport(tlm::tlm_generic_payload& transaction, sc_time& delay)
-{
-	tlm::tlm_command cmd = transaction.get_command();
-	unsigned char *data = transaction.get_data_ptr();
-	tlm::tlm_response_status status = tlm::TLM_OK_RESPONSE;
-
-	switch(cmd)
-	{
-		case (tlm::TLM_READ_COMMAND):
-			m_count = m_count + 1;
-			data[0] = m_count & 0xFF;
-			data[1] = (m_count>>8) & 0xFF;
-			data[2] = (m_count>>16) & 0xFF;
-			data[3] = (m_count>>24) & 0xFF;
-			if(m_count == 9)
-			{
-				irq.write(true);
-				wait(sc_time(1, SC_US));
-				irq.write(false);
-			}
-			break;
-		case (tlm::TLM_WRITE_COMMAND):
-			m_count = 0;
-			break;
-		default:
-			status = tlm::TLM_COMMAND_ERROR_RESPONSE;
-	}
-
-	transaction.set_response_status(status);
-}
+#include "sample-counter.h"
 
 SC_MODULE(Top)
 {
 	SC_HAS_PROCESS(Top);
 	xilinx_zynqmp zynq;
-	ecounter *counter;
+	sCounter *counter;
 	sc_signal<bool> rst, rst_n;
 
 	void gen_rst_n(void)
@@ -125,7 +67,7 @@ SC_MODULE(Top)
 
 		zynq.rst(rst);
 
-		counter =  new ecounter("Counter");
+		counter =  new sCounter("Counter");
 		zynq.s_data->bind(counter->t_sk);
 		counter->irq(zynq.pl2ps_irq[1]);
 
