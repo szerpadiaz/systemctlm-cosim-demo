@@ -19,17 +19,18 @@ sCounter::sCounter(sc_module_name name)
 	m_ctrl = COUNTER_CTRL_RESET;
 	m_state = COUNTER_STATE_RESET;
 
-	SC_THREAD(execute);
-	sensitive << m_event_from_socket;
+	//SC_THREAD(execute);
+	//dont_initialize();
+	//sensitive << m_event_from_socket;
 }
 
 void sCounter::execute(void)
 {
 	uint8_t next;
-	while(true)
+	//while(true)
 	{
+		//wait(m_event_from_socket);
 		next = m_state;
-
 		switch(m_state)
 		{
 			case COUNTER_STATE_RESET:
@@ -51,9 +52,8 @@ void sCounter::execute(void)
 						m_count = 0;
 
 						irq.write(true);
-						wait(sc_time(1, SC_US));
+						wait(sc_time(5, SC_NS));
 						irq.write(false);
-
 					}
 				}
 				else if(m_ctrl == COUNTER_CTRL_RESET)
@@ -83,7 +83,6 @@ void sCounter::b_transport(tlm::tlm_generic_payload& transaction, sc_time& delay
 			{
 				memcpy(data, &m_count, 4);
 				m_ctrl = COUNTER_CTRL_INCREMENT;
-				m_event_from_socket.notify();
 			}
 			else
 			{
@@ -94,7 +93,6 @@ void sCounter::b_transport(tlm::tlm_generic_payload& transaction, sc_time& delay
 			if(addr == COUNTER_REGISTER_CTRL)
 			{
 				memcpy(&m_ctrl, data, 4);
-				m_event_from_socket.notify();
 			}
 			else
 			{
@@ -104,7 +102,8 @@ void sCounter::b_transport(tlm::tlm_generic_payload& transaction, sc_time& delay
 		default:
 			status = tlm::TLM_COMMAND_ERROR_RESPONSE;
 	}
-
+	execute();
+	//m_event_from_socket.notify();
 	transaction.set_response_status(status);
 }
 

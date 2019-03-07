@@ -30,7 +30,7 @@ public:
 	SC_HAS_PROCESS(sCounter);
 
 private:
-	sc_event m_event_from_socket;
+	//sc_event m_event_from_socket;
 	uint32_t m_ctrl;
 	uint32_t m_count;
 	uint8_t m_state;
