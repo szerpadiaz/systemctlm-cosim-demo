@@ -31,15 +31,12 @@
 #include <unistd.h>
 
 #include "systemc.h"
-#include "tlm_utils/simple_initiator_socket.h"
-#include "tlm_utils/simple_target_socket.h"
 #include "tlm_utils/tlm_quantumkeeper.h"
 
 using namespace sc_core;
 using namespace sc_dt;
 using namespace std;
 
-#include "trace.h"
 #include "xilinx-zynqmp2.h"
 #include "sample-counter.h"
 
@@ -47,6 +44,7 @@ SC_MODULE(Top)
 {
 	SC_HAS_PROCESS(Top);
 	xilinx_zynqmp zynq;
+	sc_clock *clk;
 	sCounter *counter;
 	sc_signal<bool> rst, rst_n;
 
@@ -67,7 +65,9 @@ SC_MODULE(Top)
 
 		zynq.rst(rst);
 
+		clk = new sc_clock("clk", sc_time(20, SC_NS));
 		counter =  new sCounter("Counter");
+		counter->clk(*clk);
 		zynq.s_data->bind(counter->t_sk);
 		counter->irq(zynq.pl2ps_irq[1]);
 
@@ -87,7 +87,6 @@ int sc_main(int argc, char* argv[])
 {
 	Top *top;
 	uint64_t sync_quantum;
-	sc_trace_file *trace_fp = NULL;
 
 	if (argc < 3) {
 		sync_quantum = 10000;
@@ -106,16 +105,11 @@ int sc_main(int argc, char* argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	trace_fp = sc_create_vcd_trace_file("trace");
-	trace(trace_fp, *top, top->name());
 	/* Pull the reset signal.  */
 	top->rst.write(true);
 	sc_start(1, SC_US);
 	top->rst.write(false);
 
 	sc_start();
-	if (trace_fp) {
-		sc_close_vcd_trace_file(trace_fp);
-	}
 	return 0;
 }
