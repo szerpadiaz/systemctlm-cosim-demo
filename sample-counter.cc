@@ -47,11 +47,8 @@ void sCounter::execute(void)
 		}
 		else
 		{
-			if(m_ticksCount < m_ticksPerCount)
-			{
-				m_ticksCount++;
-			}
-			else
+			m_ticksCount++;
+			if(m_ticksCount == m_ticksPerCount)
 			{
 				m_count++;
 				m_ticksCount = 0;
