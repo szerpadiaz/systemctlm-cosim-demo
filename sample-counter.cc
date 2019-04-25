@@ -33,7 +33,7 @@ void sCounter::execute(void)
 	switch(m_state)
 	{
 	case COUNTER_STATE_RESET:
-		if(m_ctrl == COUNTER_CTRL_ENABLE)
+		if(m_ctrl & COUNTER_CTRL_ENABLE)
 		{
 			next = COUNTER_STATE_COUNTING;
 		}
@@ -52,9 +52,17 @@ void sCounter::execute(void)
 			{
 				m_count++;
 				m_ticksCount = 0;
-				//irq.write(true);
-				//wait(sc_time(20, SC_NS));
-				//irq.write(false);
+				if(m_ctrl & COUNTER_CTRL_IRQ_EN)
+				{
+					irq.write(true);
+					//cout << "count = " << m_count << " - ticks = " <<m_ticksPerCount << endl;
+					//wait(sc_time(20, SC_NS));
+					//irq.write(false);
+				}
+			}
+			else
+			{
+				irq.write(false);
 			}
 		}
 

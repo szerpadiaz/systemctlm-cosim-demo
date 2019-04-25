@@ -4,6 +4,7 @@
 #define COUNTER_REGISTER_COUNT 		  (0xFF4E0008)
 #define COUNTER_CTRL_RESET     (0)
 #define COUNTER_CTRL_ENABLE    (1)
+#define COUNTER_CTRL_IRQ_EN    (2)
 
 #define COUNTER_MAX_COUNT 	   (9)
 #define COUNTER_STATE_RESET    (0)
