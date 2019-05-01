@@ -94,6 +94,11 @@ int sc_main(int argc, char* argv[])
 		sync_quantum = strtoull(argv[2], NULL, 10);
 	}
 
+	// sc_set_time_resolution can only be called before the first
+	// sc_time object is created. This means that after setting the
+	// global quantum it will not be possible to call sc_set_time_resolution.
+	// If sc_set_time_resolution must be called this must be done before
+	// the global quantum is set.
 	sc_set_time_resolution(1, SC_PS);
 
 	top = new Top("top", argv[1], sc_time((double) sync_quantum, SC_NS));
