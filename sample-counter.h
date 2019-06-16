@@ -10,8 +10,8 @@
 #define COUNTER_STATE_RESET    (0)
 #define COUNTER_STATE_COUNTING (1)
 
-#define INPUT_CLK_FREQ         (100000000)
-#define COUNTER_OUTPUT_FREQ    (1000000)
+#define INPUT_CLK_FREQ         (50000000)
+#define COUNTER_OUTPUT_FREQ    (50000000)
 
 /**
  * Sample counter using TLM-sockets as input
