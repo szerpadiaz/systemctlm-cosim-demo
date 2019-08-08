@@ -16,12 +16,11 @@ sCounter::sCounter(sc_module_name name)
 {
 	t_sk.register_b_transport(this, &sCounter::b_transport);
 	m_count = 0;
-	m_ticksCount = 0;
-
-	m_output_freq = COUNTER_OUTPUT_FREQ;
-	m_ticksPerCount = INPUT_CLK_FREQ/m_output_freq;
 	m_ctrl = COUNTER_CTRL_RESET;
 	m_state = COUNTER_STATE_RESET;
+
+	m_irqCount = 0;
+	m_irq_output_freq = COUNTER_OUTPUT_FREQ;
 
 	SC_METHOD(execute);
 	sensitive << clk.pos();
@@ -43,26 +42,22 @@ void sCounter::execute(void)
 		{
 			next = COUNTER_STATE_RESET;
 			m_count = 0;
-			m_ticksCount = 0;
+			m_irqCount = 0;
 		}
 		else
 		{
-			m_ticksCount++;
-			if(m_ticksCount == m_ticksPerCount)
+			m_count++;
+			if(m_ctrl & COUNTER_CTRL_IRQ_EN)
 			{
-				m_count++;
-				m_ticksCount = 0;
-				if(m_ctrl & COUNTER_CTRL_IRQ_EN)
+				if(m_irqCount == m_count)
 				{
 					irq.write(true);
-					//cout << "count = " << m_count << " - ticks = " <<m_ticksPerCount << endl;
-					//wait(sc_time(20, SC_NS));
-					//irq.write(false);
+					m_count = 0;
 				}
-			}
-			else
-			{
-				irq.write(false);
+				else
+				{
+					irq.write(false);
+				}
 			}
 		}
 
@@ -99,8 +94,8 @@ void sCounter::b_transport(tlm::tlm_generic_payload& transaction, sc_time& delay
 			}
 			else if (addr == COUNTER_REGISTER_OUTPUT_FREQ)
 			{
-				memcpy(&m_output_freq, data, 4);
-				m_ticksPerCount = INPUT_CLK_FREQ/m_output_freq;
+				memcpy(&m_irq_output_freq, data, 4);
+				m_irqCount = INPUT_CLK_FREQ/m_irq_output_freq;
 			}
 			else
 			{

@@ -65,7 +65,7 @@ SC_MODULE(Top)
 
 		zynq.rst(rst);
 
-		clk = new sc_clock("clk", sc_time(20, SC_NS));
+		clk = new sc_clock("clk", sc_time(10, SC_NS));
 		counter =  new sCounter("Counter");
 		counter->clk(*clk);
 		zynq.s_data->bind(counter->t_sk);
