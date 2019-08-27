@@ -59,6 +59,10 @@ ifneq "$(TLM2)" ""
 CPPFLAGS += -I $(TLM2)/include/tlm
 endif
 
+ifneq "$(EXTRA_CPPFLAGS)" ""
+CPPFLAGS += $(EXTRA_CPPFLAGS)
+endif
+
 CPPFLAGS += -I .
 LDFLAGS = -L $(SYSTEMC_LIBDIR)
 LDLIBS   += -lsystemc
